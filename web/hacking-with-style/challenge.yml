@@ -1,0 +1,29 @@
+version: "0.1"
+name: Hacking with style
+category: web
+author: Ashley Lamont
+description: |
+  An admin is reviewing people's CSS ideas for a website. Would be a shame if they ran them without checking first.
+
+
+
+files:
+  - *No response*
+
+
+flags:
+  - type: static
+    content: pecan{that-was-bruteforcing-with-styles}
+    data: case_insensitive
+
+type: dynamic
+extra:
+  initial: 500
+  decay: 4
+  function: linear
+  minimum: 100
+
+
+image: .
+protocol: https
+
