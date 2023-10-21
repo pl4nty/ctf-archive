@@ -1,5 +1,5 @@
 # Use the official Node.js 18.x image as base image
-FROM node:18
+FROM node:21
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
