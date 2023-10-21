@@ -1,0 +1,25 @@
+version: "0.1"
+name: {{ name }}
+category: {{ category }}
+author: {{ author }}
+description: |
+  {{ description | indent(width=2) }}
+
+{% set filelist = files.split(',') %}
+files:
+  - {{ filelist | join('\n  - ') }}
+
+flags:
+  - type: static
+    content: {{ flag }}
+    data: case_insensitive
+
+type: dynamic
+extra:
+  initial: 500
+  decay: 4
+  function: linear
+  minimum: 100
+
+image: {{ image if image != '*No response*' else 'null' }}
+protocol: {{ 'https' if category == 'web' else 'tcp' }}

@@ -1,0 +1,41 @@
+name: Deploy pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - pages/**
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - uses: actions/setup-python@v4.7.1
+        with:
+          python-version: 3.x
+
+      - name: Setup ctfcli
+        run: pip install ctfcli==0.1.0
+
+      - name: Load CTFd credentials
+        run: |
+          mkdir .ctf
+          cat <<EOF > .ctf/config
+          [config]
+          url = https://${{ vars.CTFD_DOMAIN }}
+          access_token = ${{ secrets.CTFD_TOKEN }}
+
+          [cookies]
+          site_password = ${{ secrets.CTFD_SITE_PASSWORD }}
+
+          [challenges]
+          EOF
+
+      - name: Deploy pages
+        run: ctf pages sync
