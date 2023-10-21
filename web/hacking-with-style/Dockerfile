@@ -1,6 +1,8 @@
 # Use the official Node.js 18.x image as base image
 FROM node:18
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Install the latest version of Chrome dev package and fonts to support major charsets
 # Note: This installs the necessary libs to make the bundled version of Chromium that Puppeteer installs work.
 RUN apt-get update \
