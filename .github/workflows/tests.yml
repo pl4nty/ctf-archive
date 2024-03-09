@@ -53,17 +53,18 @@ jobs:
           [challenges]
           EOF
 
+      # TODO lint should auto detect installed challenges
+      - name: Lint challenges
+        run: |
           shopt -s globstar
           for chal in ${{ inputs.filter || steps.changed.outputs.all_changed_and_modified_files }}; do
-            echo "$chal = $chal" >> .ctf/config
+            ctf challenge lint --flag_format=${{ vars.FLAG_PREFIX || 'ctf{' }}}
           done
-
-      - name: Lint challenges
-        run: ctf challenge lint --flag_format=${{ vars.FLAG_PREFIX || 'ctf{' }}}
 
       # TODO support custom connection_info in ctfcli healthcheck
       - name: Test challenges
         run: |
+          shopt -s globstar
           for chal in ${{ inputs.filter || steps.changed.outputs.all_changed_and_modified_files }}; do
             python $chal/solve.py
           done
