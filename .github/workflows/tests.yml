@@ -1,0 +1,68 @@
+name: Lint challenges
+
+on:
+  push:
+    paths:
+      - '*/**'
+      - '!.*/**'
+      - '!pages/**'
+  workflow_dispatch:
+    filter:
+      type: string
+      description: Glob pattern for target challenges
+      required: true
+      # TODO **/challenge.yml when ctfcli testing available
+      default: 'web/**'
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - uses: tj-actions/changed-files@v42.0.5
+        id: changed
+        with:
+          dir_names: true # output folders instead of files
+          dir_names_max_depth: 2 # return challenge root folders
+
+      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: 3.x
+          cache: pip
+
+      # TODO only test changed challenges
+      - name: Setup ctfcli
+        run: |
+          pip install -r requirements.txt
+
+          mkdir .ctf
+          cat <<EOF > .ctf/config
+          [config]
+          url = https://${{ vars.CTFD_DOMAIN }}
+          access_token = ${{ secrets.CTFD_TOKEN }}
+
+          [cookies]
+          site_password = ${{ secrets.CTFD_SITE_PASSWORD }}
+
+          [challenges]
+          EOF
+
+          shopt -s globstar
+          for chal in ${{ inputs.filter || steps.changed.outputs.all_changed_and_modified_files }}; do
+            echo "$chal = $chal" >> .ctf/config
+          done
+
+      - name: Lint challenges
+        run: ctf challenge lint --flag_format=${{ vars.FLAG_PREFIX || 'ctf{' }}}
+
+      # TODO support custom connection_info in ctfcli healthcheck
+      - name: Test challenges
+        run: |
+          for chal in ${{ inputs.filter || steps.changed.outputs.all_changed_and_modified_files }}; do
+            python $chal/solve.py
+          done
