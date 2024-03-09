@@ -2,8 +2,6 @@ name: Test challenges
 
 on:
   pull_request:
-    branches:
-      - main
     paths:
       - '*/**'
       - '!.*/**'
