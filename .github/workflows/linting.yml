@@ -1,30 +1,31 @@
-name: Deploy pages
+name: Lint challenges
 
 on:
   push:
-    branches:
-      - main
-    paths:
+    paths-ignore:
+      - .*/**
+      - .*
+      - LICENSE.txt
+      - README.md
       - pages/**
   workflow_dispatch:
 
 jobs:
-  deploy:
+  main:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - uses: actions/setup-python@v4.7.1
+      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.x
+          cache: pip
 
       - name: Setup ctfcli
-        run: pip install ctfcli==0.1.0
-
-      - name: Load CTFd credentials
         run: |
+          pip install ctfcli==0.1.2
           mkdir .ctf
           cat <<EOF > .ctf/config
           [config]
@@ -37,5 +38,9 @@ jobs:
           [challenges]
           EOF
 
-      - name: Deploy pages
-        run: ctf pages sync
+      - name: Lint challenges
+        run: |
+          shopt -s globstar
+          for chal in **/challenge.yml; do
+            ctf challenge lint $chal --flag_format=${{ vars.FLAG_PREFIX || 'ctf{' }}}
+          done
