@@ -19,19 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read # changed-files
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      # changed-files doesn't support dir_names for API-based change detection
-        with:
-          fetch-depth: 2
-          
       - uses: tj-actions/changed-files@v42.0.5
         id: changed
         with:
           dir_names: true # output folders instead of files
           dir_names_exclude_current_dir: true
           dir_names_max_depth: 2 # return challenge root folders
-          dir_names_include_files: '!.*/**' # assume noone modifies a challenge and pages in the same PR
+          files: '!.*/**' # assume noone modifies a challenge and pages in the same PR
+
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
