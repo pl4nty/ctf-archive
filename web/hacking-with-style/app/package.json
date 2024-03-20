@@ -17,7 +17,7 @@
     "monaco-editor": "0.47.0",
     "pug": "3.0.2",
     "puppeteer": "22.6.0",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   },
   "devDependencies": {
     "@types/express": "4.17.21",
