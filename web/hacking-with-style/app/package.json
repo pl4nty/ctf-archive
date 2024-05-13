@@ -16,7 +16,7 @@
     "express-session": "1.18.0",
     "monaco-editor": "0.47.0",
     "pug": "3.0.2",
-    "puppeteer": "22.8.0",
+    "puppeteer": "22.8.1",
     "typescript": "5.4.5"
   },
   "devDependencies": {
